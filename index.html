@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CosmosBlackHole — Научный симулятор формирования чёрных дыр и антропного принципа</title>
+  <meta name="description" content="Интерактивный расчет и 3D-визуализация формирования черных дыр во вселенных с различными фундаментальными физическими константами, пределами Чандрасекара, TOV и условиями для жизни." />
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="./src/index.css" />
+</head>
+<body>
+  <div id="app" class="app-root">
+    <!-- TOP HEADER -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-logo-ring">
+          <div class="brand-core"></div>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">CosmosBlackHole</h1>
+          <span class="brand-badge">Multiverse Relativistic Engine v2.0</span>
+        </div>
+      </div>
+
+      <div class="header-center-info">
+        <div class="cosmo-badge" id="header-regime-badge">
+          <span class="pulse-dot"></span>
+          <span id="header-regime-text">Стабильная Вселенная</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="btn-open-dossier" class="btn btn-secondary" title="Открыть формулы и вывод из первых принципов">
+          <span class="btn-icon">📐</span>
+          <span>Научное досье (LaTeX)</span>
+        </button>
+        <button id="btn-open-export" class="btn btn-secondary" title="Экспорт научного паспорта Вселенной">
+          <span class="btn-icon">📄</span>
+          <span>Паспорт Вселенной</span>
+        </button>
+        <button id="btn-reset-all" class="btn btn-primary" title="Сбросить все параметры к нашей Вселенной">
+          <span class="btn-icon">↺</span>
+          <span>Наша Вселенная</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="app-main">
+      <!-- LEFT SIDEBAR: CONTROLS -->
+      <aside class="sidebar-controls">
+        <!-- PRESETS SECTION -->
+        <div class="panel-section presets-section">
+          <div class="section-title-row">
+            <span class="section-icon">🌌</span>
+            <h2 class="section-title">Космологические сценарии</h2>
+          </div>
+          <div id="presets-container" class="presets-grid">
+            <!-- Dynamic presets injected here -->
+          </div>
+        </div>
+
+        <!-- CONSTANTS SLIDERS SECTION -->
+        <div class="panel-section constants-section">
+          <div class="section-title-row">
+            <span class="section-icon">⚙️</span>
+            <h2 class="section-title">Фундаментальные константы</h2>
+          </div>
+          <p class="section-hint">
+            Логарифмическая шкала X / X_наша с авто-пересчетом пределов Оппенгеймера-Волкова, PBH и времени горения звёзд.
+          </p>
+          <div id="sliders-container" class="sliders-list">
+            <!-- Sliders injected here -->
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT DASHBOARD: VISUALIZATION & METRICS -->
+      <section class="dashboard-display">
+        <!-- TOP STATUS & METRICS -->
+        <div id="metrics-panel-container" class="metrics-container">
+          <!-- Metrics injected here -->
+        </div>
+
+        <!-- CENTER MULTI-VIEW VISUALIZATION CONTAINER -->
+        <div class="visualizer-card">
+          <div class="vis-toolbar">
+            <div class="vis-tabs">
+              <button class="vis-tab active" data-tab="3d-bh">
+                <span class="tab-icon">⚫</span>
+                <span>3D Черная дыра & Искривление</span>
+              </button>
+              <button class="vis-tab" data-tab="phase-diagram">
+                <span class="tab-icon">📈</span>
+                <span>Фазовая диаграмма (Антропная зона)</span>
+              </button>
+              <button class="vis-tab" data-tab="mass-spectrum">
+                <span class="tab-icon">📊</span>
+                <span>Спектр масс ЧД (dN/d log M)</span>
+              </button>
+              <button class="vis-tab" data-tab="timeline">
+                <span class="tab-icon">⏳</span>
+                <span>Космическая хроника</span>
+              </button>
+            </div>
+
+            <!-- Context controls for active tab -->
+            <div class="vis-context-controls">
+              <!-- 3D BH Mass Selector -->
+              <div id="bh-mass-controls" class="context-group">
+                <span class="context-label">Масса ЧД:</span>
+                <div class="pill-group">
+                  <button class="pill-btn" data-mass-mode="pbh" title="Микроскопическая первичная ЧД (10¹² кг)">Микро-PBH</button>
+                  <button class="pill-btn active" data-mass-mode="stellar" title="Звёздная чёрная дыра (10 M☉)">10 M☉ Звёздная</button>
+                  <button class="pill-btn" data-mass-mode="smbh" title="Сверхмассивная ЧД (Sgr A*, 4.15×10⁶ M☉)">Sgr A* (SMBH)</button>
+                </div>
+              </div>
+
+              <!-- Phase Diagram Mode Selector -->
+              <div id="phase-controls" class="context-group" style="display: none;">
+                <span class="context-label">Координаты:</span>
+                <div class="pill-group">
+                  <button class="pill-btn active" data-phase-mode="couplings">α vs α_G</button>
+                  <button class="pill-btn" data-phase-mode="cosmo">G vs Λ</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB CONTENT PANES -->
+          <div class="vis-viewport-wrapper">
+            <!-- Pane 1: 3D Black Hole -->
+            <div id="pane-3d-bh" class="vis-pane active">
+              <div id="bh-canvas-container" class="three-container"></div>
+              <div class="vis-overlay-legend">
+                <div class="legend-item"><span class="legend-dot dot-horizon"></span> Горизонт событий (r_s = 2GM/c²)</div>
+                <div class="legend-item"><span class="legend-dot dot-photon"></span> Фотонная сфера (r_ph = 1.5 r_s)</div>
+                <div class="legend-item"><span class="legend-dot dot-disk"></span> Аккреционный диск с доплеровским свечением</div>
+                <div class="legend-item"><span class="legend-dot dot-grid"></span> Воронка кривизны Минковского-Шварцшильда</div>
+              </div>
+            </div>
+
+            <!-- Pane 2: 2D Phase Diagram -->
+            <div id="pane-phase-diagram" class="vis-pane">
+              <canvas id="phase-canvas"></canvas>
+            </div>
+
+            <!-- Pane 3: Mass Spectrum -->
+            <div id="pane-mass-spectrum" class="vis-pane">
+              <canvas id="mass-spectrum-canvas"></canvas>
+            </div>
+
+            <!-- Pane 4: Cosmic Timeline -->
+            <div id="pane-timeline" class="vis-pane">
+              <div id="timeline-container" class="timeline-wrapper"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- SCIENTIFIC DOSSIER MODAL (KaTeX) -->
+    <div id="modal-dossier" class="modal-backdrop" style="display: none;">
+      <div class="modal-dialog modal-large">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <span class="modal-badge">Академический справочник</span>
+            <h2 class="modal-title">Теоретический фундамент и вывод формул</h2>
+          </div>
+          <button class="modal-close-btn" data-close="modal-dossier">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="dossier-content" class="dossier-container">
+            <!-- KaTeX Dossier rendered here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORT MODAL -->
+    <div id="modal-export" class="modal-backdrop" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <span class="modal-badge">Экспорт данных</span>
+            <h2 class="modal-title">Паспорт исследуемой Вселенной</h2>
+          </div>
+          <button class="modal-close-btn" data-close="modal-export">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="export-hint">
+            Сгенерированный отчёт содержит значения всех констант, вычисленные пределы звёздного коллапса, 
+            оценку антропной пригодности и отклонения от эталонной модели нашей Вселенной.
+          </p>
+          <div class="export-preview-box">
+            <textarea id="export-preview-text" readonly></textarea>
+          </div>
+          <div class="export-actions-row">
+            <button id="btn-copy-md" class="btn btn-primary">
+              <span class="btn-icon">📋</span>
+              <span>Копировать Markdown</span>
+            </button>
+            <button id="btn-download-json" class="btn btn-secondary">
+              <span class="btn-icon">💾</span>
+              <span>Скачать JSON</span>
+            </button>
+            <button id="btn-print" class="btn btn-secondary">
+              <span class="btn-icon">🖨️</span>
+              <span>Печать / PDF</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
